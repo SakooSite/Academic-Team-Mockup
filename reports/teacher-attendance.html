@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รายงานการเข้าเรียน | Academic Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // same theme as the other Tailwind report pages (unable-exam-report.html)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f7f8fc',
+            ink: '#1e293b',
+            muted: '#64748b',
+            brand: '#2563eb'
+          },
+          fontFamily: {
+            body: ['"Noto Sans Thai"', 'system-ui', 'sans-serif']
+          },
+          fontSize: {
+            xs: ['1.15vh', { lineHeight: '1.55' }],
+            sm: ['1.35vh', { lineHeight: '1.6' }],
+            base: ['1.55vh', { lineHeight: '1.6' }],
+            lg: ['1.75vh', { lineHeight: '1.45' }],
+            xl: ['2vh', { lineHeight: '1.35' }],
+            '2xl': ['2.45vh', { lineHeight: '1.25' }],
+            '3xl': ['3vh', { lineHeight: '1.18' }],
+            '4xl': ['3.6vh', { lineHeight: '1.12' }],
+            '5xl': ['4.2vh', { lineHeight: '1.08' }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="relative min-h-screen overflow-x-hidden bg-[#F7F9FC] font-body text-ink">
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -left-24 top-0 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl"></div>
+    <div class="absolute right-0 top-20 h-80 w-80 rounded-full bg-sky-100/60 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-emerald-100/50 blur-3xl"></div>
+  </div>
+  <div id="layoutSidebar"></div>
+
+  <div class="relative lg:pl-80">
+    <div id="layoutHeader"></div>
+    <script src="../shared/academic-layout.js?v=23"></script>
+    <script src="../assets/academic-report/js/scope-chip.js?v=3"></script>
+    <script>AcademicLayout.mount({ active: "teacher-attendance", eyebrow: "งานของฉัน", title: "รายงานการเข้าเรียน", rightHtml: ScopeChip.html });</script>
+
+    <!-- text source of the scope chip in the shared header (scope-chip.js mirrors it) -->
+    <aside class="academic-card hidden" aria-hidden="true">
+      <span class="meta-label">ครูผู้สอน</span>
+      <strong class="meta-value">ครูสมชาย ใจดี</strong>
+      <span class="teacher-profile-label">ค21101 · ภาคเรียนที่ 1/2569</span>
+    </aside>
+
+    <main class="px-4 py-6 lg:px-8 lg:py-8">
+      <div class="space-y-6">
+        <section>
+          <nav class="mb-3 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="breadcrumb">
+            <a href="../timetable/my-timetable.html" class="font-medium text-slate-600 transition hover:text-brand focus:outline-none focus:ring-4 focus:ring-blue-100">งานของฉัน</a>
+            <span class="text-slate-300">&gt;</span>
+            <span class="font-medium text-slate-800">รายงานการเข้าเรียน</span>
+          </nav>
+          <h1 id="teacherAttendanceTitle" class="text-3xl font-semibold tracking-tight text-slate-900 lg:text-4xl">รายงานการเข้าเรียน</h1>
+          <p class="mt-3 max-w-4xl text-sm leading-6 text-slate-500">ติดตามการมาเรียนของนักเรียนในรายวิชาที่คุณสอน</p>
+        </section>
+
+        <!-- summary -->
+        <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:p-6" aria-labelledby="teacherSummaryTitle">
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">ภาพรวม</p>
+              <h2 class="mt-2 text-xl font-semibold text-slate-900" id="teacherSummaryTitle">สรุปผลการเข้าเรียน</h2>
+              <p class="mt-1 text-sm text-slate-500" id="teacherSummaryScope">ค21101 คณิตศาสตร์พื้นฐาน · ม.1/1 · สิงหาคม 2569</p>
+            </div>
+            <div class="flex flex-wrap gap-2 self-start">
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-600">คาบเรียน <strong class="font-semibold text-slate-900" id="teacherSessionCount">0 คาบ</strong></span>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-600">เวลาเรียนขั้นต่ำ <strong class="font-semibold text-slate-900" id="teacherThresholdMeta">80%</strong></span>
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 gap-4 xl:grid-cols-4" aria-label="ตัวเลขสรุปผล">
+            <article class="rounded-2xl border border-blue-100 bg-blue-50/60 p-5">
+              <p class="text-sm font-medium text-blue-700">นักเรียนทั้งหมด</p>
+              <p class="mt-2 text-4xl font-semibold tracking-tight text-slate-900" id="teacherStudentCount">0 คน</p>
+            </article>
+            <article class="rounded-2xl border border-amber-100 bg-amber-50/70 p-5">
+              <p class="text-sm font-medium text-amber-700">% ขาดเรียน</p>
+              <p class="mt-2 text-4xl font-semibold tracking-tight text-amber-700" id="teacherAbsentRate">0%</p>
+            </article>
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <p class="text-sm font-medium text-slate-500">ขาดเรียน</p>
+              <p class="mt-2 text-4xl font-semibold tracking-tight text-slate-900" id="teacherAbsentCount">0 คน</p>
+            </article>
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <p class="text-sm font-medium text-slate-500">มาสาย</p>
+              <p class="mt-2 text-4xl font-semibold tracking-tight text-slate-900" id="teacherLateCount">0 คน</p>
+            </article>
+          </div>
+
+          <div class="mt-5 flex flex-col gap-1 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <h3 class="text-base font-semibold text-slate-900">กลุ่มเสี่ยง มส <span class="ml-1 text-amber-600" id="teacherRiskCount">0 คน</span></h3>
+            <span class="text-sm text-slate-500" id="teacherRiskThresholdLabel">ขาดถึงครึ่งหนึ่งของที่ขาดได้ แต่ยังไม่เกิน</span>
+          </div>
+          <div class="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3" id="teacherRiskList" aria-label="กลุ่มเสี่ยง มส"></div>
+        </section>
+
+        <!-- filters -->
+        <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:p-6" aria-labelledby="teacherFilterTitle">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">ตัวกรองการค้นหา</p>
+            <h2 class="mt-2 text-xl font-semibold text-slate-900" id="teacherFilterTitle">ขอบเขตรายงาน</h2>
+          </div>
+          <form id="teacherAttendanceFilters" aria-label="ตัวกรองรายงานการเข้าเรียน"
+            class="[&_input]:w-full [&_input]:rounded-2xl [&_input]:border [&_input]:border-slate-200 [&_input]:bg-white [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_input]:outline-none [&_input]:transition focus:[&_input]:border-brand focus:[&_input]:ring-4 focus:[&_input]:ring-blue-100 [&_select]:w-full [&_select]:rounded-2xl [&_select]:border [&_select]:border-slate-200 [&_select]:bg-white [&_select]:px-4 [&_select]:py-3 [&_select]:text-sm [&_select]:outline-none [&_select]:transition focus:[&_select]:border-brand focus:[&_select]:ring-4 focus:[&_select]:ring-blue-100 disabled:[&_select]:bg-slate-50 disabled:[&_select]:text-slate-500">
+            <div class="mt-5 grid gap-4 md:grid-cols-2">
+              <label class="block">
+                <span class="mb-2 block text-sm font-medium text-slate-700">ห้องเรียน</span>
+                <select id="teacherRoom"><option value="m1-1">ม.1/1</option><option value="m1-2">ม.1/2</option></select>
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm font-medium text-slate-700">รายวิชา</span>
+                <select id="teacherSubject" disabled><option>ค21101 คณิตศาสตร์พื้นฐาน</option></select>
+              </label>
+            </div>
+
+            <details class="group mt-4 rounded-3xl border border-slate-200 bg-[#F7F9FC]">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-slate-700 [&::-webkit-details-marker]:hidden">
+                <span class="inline-flex items-center gap-2">ปรับช่วงเวลา <svg class="h-4 w-4 transition group-open:rotate-180" viewBox="0 0 24 24" fill="currentColor"><path d="m7 10 5 5 5-5H7Z"/></svg></span>
+                <strong class="font-medium text-slate-500" id="teacherTimeFilterSummary">รายภาคเรียน: ปี 2569 / ภาคเรียนที่ 1</strong>
+              </summary>
+              <div class="grid gap-4 border-t border-slate-200 p-4 md:grid-cols-3" aria-labelledby="teacherTimeFilterTitle">
+                <h3 class="sr-only" id="teacherTimeFilterTitle">กำหนดช่วงเวลารายงาน</h3>
+                <label class="block">
+                  <span class="mb-2 block text-sm font-medium text-slate-700">รูปแบบช่วงเวลา</span>
+                  <select id="teacherPeriodType"><option value="monthly">รายเดือน</option><option value="semester" selected>รายภาคเรียน</option><option value="custom">ระบุช่วงเวลา</option></select>
+                </label>
+                <div class="grid gap-4 sm:grid-cols-2 md:col-span-2" id="teacherSemesterGroup">
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-slate-700">ปีการศึกษา</span><select id="teacherSemesterYear"><option value="2569">2569</option></select></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-slate-700">ภาคเรียน</span><select id="teacherSemesterTerm"><option value="1">ภาคเรียนที่ 1</option></select></label>
+                </div>
+                <div class="hidden gap-4 sm:grid-cols-2 md:col-span-2 [&:not(.hidden)]:grid" id="teacherMonthlyGroup">
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-slate-700">ปีการศึกษา</span><select id="teacherMonthlyYear"><option value="2026">2569</option></select></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-slate-700">เดือน</span><select id="teacherMonthlyMonth"><option value="08">สิงหาคม</option><option value="07">กรกฎาคม</option></select></label>
+                </div>
+                <div class="hidden gap-4 sm:grid-cols-2 md:col-span-2 [&:not(.hidden)]:grid" id="teacherCustomGroup">
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-slate-700">วันที่เริ่มต้น</span><input id="teacherStartDate" type="date" value="2026-07-01" /></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-slate-700">วันที่สิ้นสุด</span><input id="teacherEndDate" type="date" value="2026-08-31" /></label>
+                </div>
+              </div>
+            </details>
+          </form>
+        </section>
+
+        <!-- per-period table -->
+        <section class="rounded-3xl border border-slate-200 bg-white shadow-sm" aria-labelledby="teacherTableTitle">
+          <div class="flex flex-col gap-4 border-b border-slate-200 p-5 lg:flex-row lg:items-center lg:justify-between lg:p-6">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">ผลลัพธ์</p>
+              <h3 class="mt-2 text-xl font-semibold text-slate-900" id="teacherTableTitle">รายละเอียดการเข้าเรียนรายคาบ</h3>
+              <p class="mt-1 text-sm text-slate-500" id="teacherTableMeta">0 คน · 0 คาบ</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <label class="flex items-center gap-2 text-sm font-medium text-slate-600" for="teacherStatusFilter">
+                <span class="whitespace-nowrap">สถานะ</span>
+                <select id="teacherStatusFilter" class="min-w-[142px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-blue-100"><option value="all">ทุกสถานะ</option><option value="present">มา</option><option value="late">สาย</option><option value="absent">ขาด</option><option value="leave">ลา</option></select>
+              </label>
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" id="teacherThresholdBtn" type="button">ตั้งค่าเกณฑ์</button>
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 [&.is-active]:border-blue-300 [&.is-active]:bg-blue-50 [&.is-active]:text-blue-700" id="teacherEditBtn" type="button">แก้ไขแบบกลุ่ม</button>
+              <button class="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" id="teacherSaveBtn" type="button" disabled>บันทึก</button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-4 px-5 pt-4 text-xs text-slate-500 lg:px-6" aria-label="คำอธิบายสถานะ">
+            <span class="whitespace-nowrap">ม = มา</span><span class="whitespace-nowrap">ส = สาย</span><span class="whitespace-nowrap">ข = ขาด</span><span class="whitespace-nowrap">ล = ลา</span>
+          </div>
+          <div class="p-5 lg:p-6">
+            <div class="max-h-[620px] overflow-auto rounded-2xl border border-slate-200">
+              <table class="w-max min-w-full border-separate border-spacing-0 text-xs [&_td]:min-w-[72px] [&_td]:border-b [&_td]:border-r [&_td]:border-slate-100 [&_td]:bg-white [&_td]:px-2.5 [&_td]:py-2 [&_td]:text-center [&_td]:text-slate-700 [&_th]:sticky [&_th]:top-0 [&_th]:z-[3] [&_th]:min-w-[72px] [&_th]:whitespace-nowrap [&_th]:border-b [&_th]:border-r [&_th]:border-slate-200 [&_th]:bg-slate-50 [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-center [&_th]:font-semibold [&_th]:text-slate-600 [&_tbody_tr:hover>td]:bg-slate-50 [&_tr.is-highlighted>td]:!bg-amber-100">
+                <thead id="teacherAttendanceThead"></thead>
+                <tbody id="teacherAttendanceTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="w-[min(440px,calc(100vw-32px))] rounded-3xl border border-slate-200 bg-white p-0 text-ink shadow-2xl backdrop:bg-slate-900/40" id="teacherThresholdDialog" aria-labelledby="teacherThresholdTitle">
+    <form method="dialog" id="teacherThresholdForm">
+      <header class="flex items-center justify-between gap-3 border-b border-slate-200 px-6 py-4">
+        <h2 class="text-lg font-semibold text-slate-900" id="teacherThresholdTitle">ตั้งค่าเกณฑ์ติดตาม</h2>
+        <button class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-xl text-slate-500 transition hover:bg-slate-50" value="cancel" aria-label="ปิด">×</button>
+      </header>
+      <div class="px-6 py-5">
+        <label class="mb-2 block text-sm font-medium text-slate-700" for="teacherThresholdInput">อัตราการเข้าเรียนขั้นต่ำ (%)</label>
+        <input class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-blue-100" id="teacherThresholdInput" type="number" min="1" max="100" value="80" required />
+      </div>
+      <footer class="flex flex-col-reverse gap-2 border-t border-slate-200 px-6 py-4 sm:flex-row sm:justify-end">
+        <button class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" value="cancel">ยกเลิก</button>
+        <button class="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700" id="teacherThresholdApplyBtn" value="default">บันทึกเกณฑ์</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div id="teacherToast" role="status" aria-live="polite"
+    data-base-class="pointer-events-none fixed bottom-6 right-6 z-[70] flex max-w-sm translate-y-2 flex-col gap-0.5 rounded-2xl bg-slate-900 px-5 py-4 text-sm text-white opacity-0 shadow-xl transition duration-200 [&.is-visible]:translate-y-0 [&.is-visible]:opacity-100"
+    class="pointer-events-none fixed bottom-6 right-6 z-[70] flex max-w-sm translate-y-2 flex-col gap-0.5 rounded-2xl bg-slate-900 px-5 py-4 text-sm text-white opacity-0 shadow-xl transition duration-200 [&.is-visible]:translate-y-0 [&.is-visible]:opacity-100"></div>
+
+  <script>
+    (() => {
+      const statusLabels = { present: "มา", late: "สาย", absent: "ขาด", leave: "ลา" };
+      const statusShort = { present: "ม", late: "ส", absent: "ข", leave: "ล" };
+      const studentsByRoom = {
+        "m1-1": [
+          ["66001", "กานต์ธิดา สุขผล"], ["66002", "ธนกฤต แซ่ตั้ง"], ["66003", "ปวีณ์นุช อินทรา"],
+          ["66004", "ภูริณัฐ ขยันดี"], ["66005", "ณิชกานต์ พูลทรัพย์"], ["66006", "ศุภวิชญ์ เจริญผล"],
+          ["66007", "ชญานิน แสงแก้ว"], ["66008", "ภัทรดนัย วงศ์ดี"], ["66009", "พิมพ์ชนก แสงแก้ว"],
+          ["66010", "ชนนท์ มีสุข"], ["66011", "ณัฐณิชา วัฒนะ"], ["66012", "ปุณณภพ เกียรติไพบูลย์"],
+          ["66013", "รินรดา ชูศรี"], ["66014", "อัครวินท์ คงมั่น"]
+        ],
+        "m1-2": [
+          ["66101", "กมลชนก พรหมมา"], ["66102", "พีรพัฒน์ วงศ์ดี"], ["66103", "ปวริศา ศรีสวัสดิ์"],
+          ["66104", "ชยพล แสงทอง"], ["66105", "วริศรา นาคงาม"], ["66106", "ณัฐดนัย เกิดผล"],
+          ["66107", "มนัสวี ใจมั่น"], ["66108", "ธนภัทร ทองดี"], ["66109", "เขมิกา แก้วใส"],
+          ["66110", "ธนโชติ บุญส่ง"], ["66111", "ชุติมา วงศ์สวัสดิ์"], ["66112", "กฤตภาส สายใจ"],
+          ["66113", "ศศิธร นิ่มนวล"], ["66114", "วชิรวิทย์ พูลเพิ่ม"]
+        ]
+      };
+      const sessionDates = ["2026-07-07", "2026-07-14", "2026-07-21", "2026-07-28", "2026-08-03", "2026-08-04", "2026-08-10", "2026-08-11"];
+      const state = { threshold: 80, editing: false, attendance: new Map() };
+      // Tailwind classes for the markup this script builds (complete strings, so the Tailwind CDN sees them)
+      const UI = {
+        status: {
+          present: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+          late: "bg-amber-50 text-amber-700 ring-amber-200",
+          absent: "bg-rose-50 text-rose-700 ring-rose-200",
+          leave: "bg-blue-50 text-slate-600 ring-blue-200"
+        },
+        rate: { normal: "text-slate-700", risk: "text-amber-600", blocked: "text-rose-600" },
+        codeCell: "sticky left-0 z-[2] w-[110px] min-w-[110px] !text-left",
+        nameCell: "sticky left-[110px] z-[2] w-[210px] min-w-[210px] !text-left shadow-[1px_0_0_#e2e8f0]",
+        empty: "rounded-2xl bg-slate-50 px-4 py-8 text-center text-sm text-slate-400"
+      };
+      const els = {
+        room: document.getElementById("teacherRoom"), periodType: document.getElementById("teacherPeriodType"), monthlyYear: document.getElementById("teacherMonthlyYear"), monthlyMonth: document.getElementById("teacherMonthlyMonth"),
+        semesterGroup: document.getElementById("teacherSemesterGroup"), monthlyGroup: document.getElementById("teacherMonthlyGroup"), customGroup: document.getElementById("teacherCustomGroup"), timeFilterSummary: document.getElementById("teacherTimeFilterSummary"),
+        startDate: document.getElementById("teacherStartDate"), endDate: document.getElementById("teacherEndDate"), statusFilter: document.getElementById("teacherStatusFilter"),
+        thead: document.getElementById("teacherAttendanceThead"), tbody: document.getElementById("teacherAttendanceTbody"), summaryScope: document.getElementById("teacherSummaryScope"),
+        sessionCount: document.getElementById("teacherSessionCount"), studentCount: document.getElementById("teacherStudentCount"), absentRate: document.getElementById("teacherAbsentRate"),
+        absentCount: document.getElementById("teacherAbsentCount"), lateCount: document.getElementById("teacherLateCount"),
+        riskCount: document.getElementById("teacherRiskCount"), riskList: document.getElementById("teacherRiskList"), riskThresholdLabel: document.getElementById("teacherRiskThresholdLabel"), tableMeta: document.getElementById("teacherTableMeta"),
+        editBtn: document.getElementById("teacherEditBtn"), saveBtn: document.getElementById("teacherSaveBtn"), thresholdBtn: document.getElementById("teacherThresholdBtn"),
+        thresholdDialog: document.getElementById("teacherThresholdDialog"), thresholdForm: document.getElementById("teacherThresholdForm"), thresholdInput: document.getElementById("teacherThresholdInput"),
+        thresholdMeta: document.getElementById("teacherThresholdMeta"), toast: document.getElementById("teacherToast")
+      };
+
+      function seedAttendance() {
+        Object.entries(studentsByRoom).forEach(([roomId, students]) => {
+          sessionDates.forEach((date, sessionIndex) => students.forEach(([code], studentIndex) => {
+            let status = "present";
+            if (studentIndex === 3 && sessionIndex >= 2 && sessionIndex % 2 === 0) status = "absent";
+            else if (studentIndex === 5 && sessionIndex % 3 === 1) status = "late";
+            else if (studentIndex === 6 && sessionIndex % 4 === 0) status = "leave";
+            else if (studentIndex === 7 && roomId === "m1-2" && sessionIndex > 4) status = "absent";
+            else if (studentIndex === 9 && sessionIndex === 5) status = "absent";
+            state.attendance.set(`${roomId}|${code}|${date}`, status);
+          }));
+        });
+      }
+
+      function formatDate(dateValue) {
+        return new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short" }).format(new Date(`${dateValue}T00:00:00`));
+      }
+
+      function getSessions() {
+        if (els.periodType.value === "monthly") return sessionDates.filter(date => date.startsWith(`${els.monthlyYear.value}-${els.monthlyMonth.value}`));
+        if (els.periodType.value === "custom") return sessionDates.filter(date => date >= els.startDate.value && date <= els.endDate.value);
+        return [...sessionDates];
+      }
+
+      function getRows() {
+        const sessions = getSessions();
+        return studentsByRoom[els.room.value].map(([code, name]) => {
+          const statuses = sessions.map(date => state.attendance.get(`${els.room.value}|${code}|${date}`));
+          const absent = statuses.filter(status => status === "absent").length;
+          const late = statuses.filter(status => status === "late").length;
+          const leave = statuses.filter(status => status === "leave").length;
+          const absentRate = statuses.length ? Math.round((absent / statuses.length) * 100) : 0;
+          return { code, name, statuses, absent, late, leave, absentRate, risk: absenceRisk(absent, statuses.length) };
+        });
+      }
+
+      // same rule as the academic attendance report: the absence limit comes from the minimum attendance,
+      // and a student is at risk once half of that limit is used up but before it is exceeded (exceeded = มส)
+      function absenceRisk(absent, total) {
+        const limit = Math.floor((total * (100 - state.threshold)) / 100);
+        const startsAt = Math.ceil(limit * 0.5);
+        return { limit, startsAt, isRisk: limit > 0 && absent >= startsAt && absent <= limit, isBlocked: absent > limit };
+      }
+
+      function visibleRows(rows) {
+        if (els.statusFilter.value === "all") return rows;
+        return rows.filter(row => row.statuses.includes(els.statusFilter.value));
+      }
+
+      function renderTable() {
+        const sessions = getSessions();
+        const rows = visibleRows(getRows());
+        els.thead.innerHTML = `<tr><th class="${UI.codeCell} !z-[5]">รหัสนักเรียน</th><th class="${UI.nameCell} !z-[5]">ชื่อ-สกุล</th>${sessions.map((date, index) => `<th><span class="flex flex-col"><strong class="font-semibold">${formatDate(date)}</strong><span class="text-xs font-medium text-slate-400">คาบ ${index % 2 ? 4 : 2}</span></span></th>`).join("")}<th>ขาด</th><th>สาย</th><th>ลา</th><th>% ขาด</th></tr>`;
+        els.tbody.innerHTML = rows.length ? rows.map(row => `<tr id="teacher-student-${row.code}" data-student="${row.code}" tabindex="-1"><td class="${UI.codeCell}">${row.code}</td><td class="${UI.nameCell} font-medium text-slate-900">${row.name}</td>${row.statuses.map((status, index) => `<td>${state.editing ? `<select class="min-w-[78px] rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs outline-none focus:border-brand focus:ring-2 focus:ring-blue-100" data-session="${sessions[index]}">${Object.entries(statusLabels).map(([value, label]) => `<option value="${value}"${value === status ? " selected" : ""}>${label}</option>`).join("")}</select>` : `<span class="inline-grid h-[30px] w-[30px] place-items-center rounded-lg font-bold ring-1 ring-inset ${UI.status[status]}" data-status="${status}" title="${statusLabels[status]}">${statusShort[status]}</span>`}</td>`).join("")}<td>${row.absent}</td><td>${row.late}</td><td>${row.leave}</td><td><span class="whitespace-nowrap font-bold ${row.risk.isBlocked ? UI.rate.blocked : row.risk.isRisk ? UI.rate.risk : UI.rate.normal}">${row.absentRate}%</span></td></tr>`).join("") : `<tr><td colspan="${sessions.length + 6}"><div class="${UI.empty}">ไม่มีนักเรียนที่ตรงกับสถานะที่เลือก</div></td></tr>`;
+        els.tableMeta.textContent = `${rows.length} คน · ${sessions.length} คาบ`;
+      }
+
+      function renderSummary() {
+        const rows = getRows();
+        const sessions = getSessions();
+        const totalPeriods = rows.reduce((sum, row) => sum + row.statuses.length, 0);
+        const absentPeriods = rows.reduce((sum, row) => sum + row.absent, 0);
+        const riskRows = rows.filter(row => row.risk.isRisk);
+        const limit = rows[0]?.risk.limit ?? 0;
+        els.studentCount.textContent = `${rows.length} คน`;
+        els.absentRate.textContent = `${totalPeriods ? Math.round((absentPeriods / totalPeriods) * 100) : 0}%`;
+        els.absentCount.textContent = `${rows.filter(row => row.absent).length} คน`;
+        els.lateCount.textContent = `${rows.filter(row => row.late).length} คน`;
+        els.riskCount.textContent = `${riskRows.length} คน`;
+        els.sessionCount.textContent = `${sessions.length} คาบ`;
+        els.thresholdMeta.textContent = `${state.threshold}%`;
+        els.riskThresholdLabel.textContent = `ขาดได้ไม่เกิน ${limit} คาบ · เริ่มเสี่ยงเมื่อขาด ${rows[0]?.risk.startsAt ?? 0} คาบ`;
+        const roomLabel = els.room.options[els.room.selectedIndex].text;
+        const periodLabel = els.periodType.value === "monthly" ? `${els.monthlyMonth.options[els.monthlyMonth.selectedIndex].text} 2569` : els.periodType.value === "semester" ? "ภาคเรียนที่ 1/2569" : `${formatDate(els.startDate.value)} - ${formatDate(els.endDate.value)}`;
+        els.summaryScope.textContent = `ค21101 คณิตศาสตร์พื้นฐาน · ${roomLabel} · ${periodLabel}`;
+        els.riskList.innerHTML = riskRows.length ? riskRows.map(row => `<button class="w-full min-w-0 rounded-2xl border border-amber-200 bg-amber-50/60 p-3 text-left transition hover:border-amber-400 hover:bg-amber-50 focus:outline-none focus-visible:border-amber-400" type="button" data-student-target="${row.code}"><strong class="block font-semibold text-slate-900">${row.name}</strong><span class="mt-1 block text-xs text-slate-500">${row.code} · ขาด ${row.absent}/${row.risk.limit} คาบ</span></button>`).join("") : `<div class="${UI.empty} sm:col-span-2 xl:col-span-3">ไม่มีนักเรียนกลุ่มเสี่ยง มส</div>`;
+      }
+
+      function render() { renderSummary(); renderTable(); saveLastSearch(); }
+
+      const LAST_SEARCH_KEY = "teacherAttendance:lastSearch";
+      const SEARCH_FIELDS = ["room", "periodType", "monthlyMonth", "startDate", "endDate", "statusFilter"];
+      function saveLastSearch() {
+        AcademicLayout.lastSearch(LAST_SEARCH_KEY, Object.fromEntries(SEARCH_FIELDS.map(key => [key, els[key].value])));
+      }
+      function restoreLastSearch() {
+        const saved = AcademicLayout.lastSearch(LAST_SEARCH_KEY);
+        if (!saved) return;
+        SEARCH_FIELDS.forEach(key => {
+          const control = els[key];
+          const value = saved[key];
+          if (!value) return;
+          if (control.tagName === "SELECT" && ![...control.options].some(option => option.value === value)) return;
+          control.value = value;
+        });
+      }
+
+      function syncPeriodFields() {
+        const type = els.periodType.value;
+        els.semesterGroup.classList.toggle("hidden", type !== "semester");
+        els.monthlyGroup.classList.toggle("hidden", type !== "monthly");
+        els.customGroup.classList.toggle("hidden", type !== "custom");
+        els.timeFilterSummary.textContent = type === "monthly"
+          ? `รายเดือน: ${els.monthlyMonth.options[els.monthlyMonth.selectedIndex].text} 2569`
+          : type === "semester" ? "รายภาคเรียน: ปี 2569 / ภาคเรียนที่ 1"
+          : `${formatDate(els.startDate.value)} - ${formatDate(els.endDate.value)}`;
+        render();
+      }
+
+      function jumpToStudent(event) {
+        const button = event.target.closest("[data-student-target]");
+        if (!button) return;
+        els.statusFilter.value = "all";
+        renderTable();
+        const row = document.getElementById(`teacher-student-${button.dataset.studentTarget}`);
+        if (!row) return;
+        row.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        row.focus({ preventScroll: true });
+        row.classList.add("is-highlighted");
+        window.clearTimeout(jumpToStudent.timer);
+        jumpToStudent.timer = window.setTimeout(() => row.classList.remove("is-highlighted"), 2200);
+      }
+
+      function showToast(message) {
+        els.toast.className = `${els.toast.dataset.baseClass} is-visible`;
+        els.toast.innerHTML = `<strong class="font-semibold">สำเร็จ</strong><span class="text-slate-200">${message}</span>`;
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => els.toast.classList.remove("is-visible"), 2200);
+      }
+
+      function toggleEdit() {
+        state.editing = !state.editing;
+        els.editBtn.classList.toggle("is-active", state.editing); // styled by [&.is-active]: variants on the button
+        els.editBtn.textContent = state.editing ? "ยกเลิกการแก้ไข" : "แก้ไขแบบกลุ่ม";
+        els.saveBtn.disabled = !state.editing;
+        renderTable();
+      }
+
+      function saveChanges() {
+        els.tbody.querySelectorAll("tr[data-student]").forEach(row => row.querySelectorAll("[data-session]").forEach(select => {
+          state.attendance.set(`${els.room.value}|${row.dataset.student}|${select.dataset.session}`, select.value);
+        }));
+        state.editing = false;
+        els.editBtn.classList.remove("is-active");
+        els.editBtn.textContent = "แก้ไขแบบกลุ่ม";
+        els.saveBtn.disabled = true;
+        render();
+        showToast("บันทึกสถานะการเข้าเรียนแล้ว");
+      }
+
+      els.room.addEventListener("change", render);
+      [els.monthlyYear, els.monthlyMonth, els.startDate, els.endDate].forEach(control => control.addEventListener("change", syncPeriodFields));
+      els.periodType.addEventListener("change", syncPeriodFields);
+      els.statusFilter.addEventListener("change", () => { renderTable(); saveLastSearch(); });
+      els.riskList.addEventListener("click", jumpToStudent);
+      els.editBtn.addEventListener("click", toggleEdit);
+      els.saveBtn.addEventListener("click", saveChanges);
+      els.thresholdBtn.addEventListener("click", () => { els.thresholdInput.value = state.threshold; els.thresholdDialog.showModal(); });
+      els.thresholdForm.addEventListener("submit", event => {
+        if (event.submitter?.value === "cancel") return;
+        const value = Number(els.thresholdInput.value);
+        if (value < 1 || value > 100) { event.preventDefault(); return; }
+        state.threshold = Math.round(value);
+        render();
+        showToast(`ปรับเกณฑ์ติดตามเป็น ${state.threshold}% แล้ว`);
+      });
+
+      seedAttendance();
+      restoreLastSearch();
+      syncPeriodFields();
+    })();
+  </script>
+  <script>ScopeChip.follow(document.querySelector(".academic-card"));</script>
+</body>
+</html>
